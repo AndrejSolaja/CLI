@@ -20,11 +20,11 @@ std::string token_type_name(token_type_t type);
 
 struct token_t {
     token_type_t type;
-    size_t offset;
-    size_t length;
+    size_t offset = 0;
+    size_t length = 0;
 
     std::optional<tokenizer_error_t> error_type;
-    size_t error_offset_within_token;
+    size_t error_offset_within_token = 0;
 
     token_t() {}
     token_t(token_type_t type) : type(type) {}
@@ -36,7 +36,7 @@ public:
     Tokenizer(const std::string& file_path);
 
     std::vector<token_t> tokenize();
-    std::string token_string(token_t token);
+    std::string token_string(const token_t& token);
 
 private:
     bool load_file(const std::string& file_path);

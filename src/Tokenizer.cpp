@@ -191,7 +191,7 @@ std::vector<token_t> Tokenizer::tokenize() {
     return token_list;
 }
 
-std::string Tokenizer::token_string(token_t token) {
+std::string Tokenizer::token_string(const token_t& token) {
     std::string text = raw_data.substr(token.offset, token.length);
     std::string type = token_type_name(token.type);
     return "[" + text + "](" + type + ")";
