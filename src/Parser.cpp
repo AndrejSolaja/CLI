@@ -1,17 +1,6 @@
 #include "Parser.h"
 #include <iostream>
 
-RedirectType stringToRedirectType(const std::string str) {
-    if (str == "<") {
-        return RedirectType::in;
-    } else if (str == ">") {
-        return RedirectType::out;
-    } else if (str == ">>") {
-        return RedirectType::append;
-    }
-    return RedirectType::none;
-}
-
 Parser::Parser(Tokenizer tokenizer) {
     for (auto x : tokenizer.tokenize()) {
         tokens.push(x);

@@ -1,25 +1,17 @@
 #include <iostream>
 #include <fstream>
+
 #include "Tokenizer.h"
 #include "Parser.h"
+#include "Executor.h"
 
 int main()
 {
-    Tokenizer tokenizer("input.txt"); 
-
-    std::vector<Token> token_list = tokenizer.tokenize();
-
-    for(const auto& x : token_list) {
-        std::cout << tokenizer.tokenString(x) << std::endl;
-    }
-
+    Tokenizer tokenizer("command.txt");
     Parser parser(tokenizer);
+    Executor executor(parser);
 
-    auto commands = parser.parseInput();
-    std::cout << "test";
-
-
-
+    executor.executeCommands();
     
 
 }

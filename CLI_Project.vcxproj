@@ -19,13 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Executor.cpp" />
     <ClCompile Include="src\Parser.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Executor.h" />
+    <ClInclude Include="src\InbuiltCommands.h" />
     <ClInclude Include="src\Parser.h" />
     <ClInclude Include="src\Tokenizer.h" />
+    <ClInclude Include="src\Types.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
