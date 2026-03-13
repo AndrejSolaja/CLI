@@ -4,11 +4,11 @@
 #include <vector>
 #include <optional>
 
-enum class tokenizer_error_t {
+enum class TokenizerErrorType {
     unterminated_quote,
 };
 
-enum class token_type_t {
+enum class TokenType {
     string,         // words, commands, arguments, file paths
     pipe,           // |
     redirect,       // <, >, >>
@@ -16,18 +16,17 @@ enum class token_type_t {
     error,
 };
 
-std::string token_type_name(token_type_t type);
+std::string tokenTypeName(TokenType type);
 
-struct token_t {
-    token_type_t type;
-    size_t offset = 0;
-    size_t length = 0;
+struct Token {
+    TokenType type;
+    std::string value;
 
-    std::optional<tokenizer_error_t> error_type;
+    std::optional<TokenizerErrorType> error_type;
     size_t error_offset_within_token = 0;
 
-    token_t() {}
-    token_t(token_type_t type) : type(type) {}
+    Token() {}
+    Token(TokenType type) : type(type) {}
 };
 
 class Tokenizer
@@ -35,23 +34,23 @@ class Tokenizer
 public:
     Tokenizer(const std::string& file_path);
 
-    std::vector<token_t> tokenize();
-    std::string token_string(const token_t& token);
+    std::vector<Token> tokenize();
+    std::string tokenString(const Token& token);
 
 private:
-    bool load_file(const std::string& file_path);
+    bool loadFile(const std::string& file_path);
 
-    std::string raw_data;   // input data
+    std::string text;       // input data
     size_t cursor;          // current position
     size_t end;             // end of input
     bool has_next;
 
-    token_t make_token(token_type_t type, size_t token_start);
-    token_t make_error(tokenizer_error_t error_type, size_t token_start, size_t error_loc);
-    token_t read_string();
-    token_t next();
-    void reset_tokenizer();
+    Token makeToken(TokenType type, size_t token_start);
+    Token makeError(TokenizerErrorType type, size_t token_start, size_t error_loc);
+    Token readString();
+    Token next();
+    void resetTokenizer();
 
-    static bool is_token_seperator(char c);
+    static bool isTokenSeparator(char c);
 };
 

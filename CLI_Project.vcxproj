@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Parser.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Parser.h" />
     <ClInclude Include="src\Tokenizer.h" />
   </ItemGroup>
   <ItemGroup>

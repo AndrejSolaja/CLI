@@ -5,26 +5,26 @@
 #include <iostream>
 #include <stdexcept>
 
-std::string token_type_name(token_type_t type) {
+std::string tokenTypeName(TokenType type) {
     switch (type) {
-        case token_type_t::string:   return "string";
-        case token_type_t::pipe:     return "pipe";
-        case token_type_t::redirect: return "redirect";
-        case token_type_t::end:      return "end";
-        case token_type_t::error:    return "error";
-        default:                     return "unknown";
+        case TokenType::string:   return "string";
+        case TokenType::pipe:     return "pipe";
+        case TokenType::redirect: return "redirect";
+        case TokenType::end:      return "end";
+        case TokenType::error:    return "error";
+        default:                  return "unknown";
     }
 }
 
 // ---- Tokenizer ----
 
 Tokenizer::Tokenizer(const std::string& file_path) {
-    if (!load_file(file_path)) {
+    if (!loadFile(file_path)) {
         throw std::runtime_error("Could not open file " + file_path);
     }
 }
 
-bool Tokenizer::load_file(const std::string& file_path) {
+bool Tokenizer::loadFile(const std::string& file_path) {
     std::ifstream file(file_path);
     if (!file.is_open()) {
         return false;
@@ -32,34 +32,32 @@ bool Tokenizer::load_file(const std::string& file_path) {
 
     std::ostringstream buffer;
     buffer << file.rdbuf();
-    raw_data = buffer.str();
+    text = buffer.str();
 
     cursor = 0;
-    end = raw_data.size();
+    end = text.size();
     has_next = true;
 
     return true;
 }
 
-token_t Tokenizer::make_token(token_type_t type, size_t token_start) {
-    token_t new_token;
+Token Tokenizer::makeToken(TokenType type, size_t token_start) {
+    Token new_token;
     new_token.type = type;
-    new_token.offset = token_start;
-    new_token.length = cursor - token_start;
+    new_token.value = text.substr(token_start, cursor - token_start);
     return new_token;
 }
 
-token_t Tokenizer::make_error(tokenizer_error_t error_type, size_t token_start, size_t error_loc) {
-    token_t new_token;
-    new_token.type = token_type_t::error;
-    new_token.offset = token_start;
-    new_token.length = cursor - token_start;
+Token Tokenizer::makeError(TokenizerErrorType error_type, size_t token_start, size_t error_loc) {
+    Token new_token;
+    new_token.type = TokenType::error;
+    new_token.value = text.substr(token_start, cursor - token_start);
     new_token.error_type = error_type;
     new_token.error_offset_within_token = error_loc - token_start; // offset from token start
     return new_token;
 }
 
-token_t Tokenizer::read_string() {
+Token Tokenizer::readString() {
     /*
         Things that count as string:
 
@@ -74,7 +72,7 @@ token_t Tokenizer::read_string() {
     bool in_double_quote = false;
 
     while (cursor < end) {
-        char c = raw_data[cursor];
+        char c = text[cursor];
 
         // ---- SINGLE QUOTE STATE ----
         if (in_single_quote) {
@@ -95,22 +93,21 @@ token_t Tokenizer::read_string() {
             case '\'': in_single_quote = true; break;
             case '"':  in_double_quote = true; break;
             default:
-                if (is_token_seperator(c)) goto done;
+                if (isTokenSeparator(c)) goto done;
         }
 
         cursor++;
     }
 
     done:
-    // Check for unterminated quotes
     if (in_single_quote || in_double_quote) {
-        return make_error(tokenizer_error_t::unterminated_quote, token_start, cursor);
+        return makeError(TokenizerErrorType::unterminated_quote, token_start, cursor);
     }
 
-    return make_token(token_type_t::string, token_start);
+    return makeToken(TokenType::string, token_start);
 }
 
-bool Tokenizer::is_token_seperator(char c) {
+bool Tokenizer::isTokenSeparator(char c) {
     switch (c) {
         case ' ':
         case '\t':
@@ -124,61 +121,61 @@ bool Tokenizer::is_token_seperator(char c) {
     }
 }
 
-token_t Tokenizer::next() {
+Token Tokenizer::next() {
     if (!has_next) {
-        return token_t(token_type_t::end);
+        return Token(TokenType::end);
     }
 
     // Skip whitespace - but NOT newlines
     // isspace expects value in range 0 to 255, thats why cast is necessary
-    while (cursor < end && isspace((unsigned char)raw_data[cursor]) && raw_data[cursor] != '\n') {
+    while (cursor < end && isspace((unsigned char)text[cursor]) && text[cursor] != '\n') {
         cursor++;
     }
 
     // Check again after skipping whitespaces
     if (cursor >= end) {
         has_next = false;
-        return token_t(token_type_t::end);
+        return Token(TokenType::end);
     }
 
     size_t token_start = cursor;
-    char c = raw_data[cursor];
+    char c = text[cursor];
 
     switch (c) {
         case '\n':
             cursor++;
             has_next = false;
-            return make_token(token_type_t::end, token_start);
+            return makeToken(TokenType::end, token_start);
 
         case '|':
             cursor++;
-            return make_token(token_type_t::pipe, token_start);
+            return makeToken(TokenType::pipe, token_start);
 
         case '>':
         case '<':
-            if (raw_data[cursor] == '>' && cursor + 1 < end && raw_data[cursor + 1] == '>') {
+            if (text[cursor] == '>' && cursor + 1 < end && text[cursor + 1] == '>') {
                 cursor++;
             }
             cursor++;
-            return make_token(token_type_t::redirect, token_start);
+            return makeToken(TokenType::redirect, token_start);
 
         default:
-            return read_string();
+            return readString();
     }
 }
 
-std::vector<token_t> Tokenizer::tokenize() {
+std::vector<Token> Tokenizer::tokenize() {
     /*
         Does a whole pass and returns a flat list of tokens.
     */
-    std::vector<token_t> token_list;
+    std::vector<Token> token_list;
 
     while (has_next) {
-        token_t token = next();
+        Token token = next();
 
         if (token.error_type.has_value()) {
             // Print error  TODO: Expand on this with better message
-            std::cout << "Error at token \"" << raw_data.substr(token.offset, token.length)
+            std::cout << "Error at token \"" << token.value
                       << "\" on position " << token.error_offset_within_token << std::endl;
             return {};
         }
@@ -187,17 +184,18 @@ std::vector<token_t> Tokenizer::tokenize() {
     }
 
     // Reset tokenizer so we can run it again if needed
-    reset_tokenizer();
+    resetTokenizer();
     return token_list;
 }
 
-std::string Tokenizer::token_string(const token_t& token) {
-    std::string text = raw_data.substr(token.offset, token.length);
-    std::string type = token_type_name(token.type);
-    return "[" + text + "](" + type + ")";
+std::string Tokenizer::tokenString(const Token& token) {
+    std::string type = tokenTypeName(token.type);
+    return "[" + token.value + "](" + type + ")";
 }
 
-void Tokenizer::reset_tokenizer() {
+void Tokenizer::resetTokenizer() {
     cursor = 0;
     has_next = true;
 }
+
+

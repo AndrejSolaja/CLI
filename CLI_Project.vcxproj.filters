@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Tokenizer.cpp" />
+    <ClCompile Include="src\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Tokenizer.h" />
+    <ClInclude Include="src\Parser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
