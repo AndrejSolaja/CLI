@@ -2,6 +2,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <ctime>
+#include <chrono>
+#include <iomanip>
 
 #include "Console.h"
 
@@ -63,8 +66,54 @@ void promptCmd(const CommandNode& command) {
 
 }
 
+void timeCmd(const CommandNode& command) {
+    if(command.args.size() != 0) {
+        std::cerr << "Command " << command.name << "takes no argument and has no options" << std::endl;
+    }
+
+    auto now = std::chrono::system_clock::now();
+    time_t t = std::chrono::system_clock::to_time_t(now);
+    tm* local = std::localtime(&t);
+
+    std::cout << std::put_time(local, "%H:%M:%S");
+
+}
+
+void dateCmd(const CommandNode& command) {
+    if(command.args.size() != 0) {
+        std::cerr << "Command " << command.name << "takes no argument and has no options" << std::endl;
+    }
+
+    auto now = std::chrono::system_clock::now();
+    time_t t = std::chrono::system_clock::to_time_t(now);
+    tm* local = std::localtime(&t);
+
+    std::cout << std::put_time(local, "%Y-%m-%d");
+
+}
+
+void touchCmd(const CommandNode& command) {
+    if(command.args.size() != 1) {
+        std::cerr << "Command " << command.name << "takes 1 argument and has no options" << std::endl;
+    }
+    std::string file_name = command.args[0];
+
+    std::ifstream infile(file_name);
+    if (infile.is_open()) {
+        std::cerr << "File " << file_name << " already exists." << std::endl;
+        return;
+    }
+    std::ofstream new_file(file_name);
+
+
+}
+
 
 const std::unordered_map<std::string, std::function<void(const CommandNode&)>> command_map = {
     {"echo", echoCmd},
     {"prompt", promptCmd},
+    {"time", timeCmd},
+    {"date", dateCmd},
+    {"touch", touchCmd},
+
 };

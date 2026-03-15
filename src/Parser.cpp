@@ -19,8 +19,7 @@ CommandNode Parser::parseCommand() {
     CommandNode command;
 
     if (tokens.front().type != TokenType::string) {
-        //TODO
-        std::cout << "ERROR:" << "First token in command isnt command name" << std::endl;
+        std::cerr << "First token in command isn't command name" << std::endl;
     }
     command.name = tokens.front().value; tokens.pop();
 
@@ -29,8 +28,7 @@ CommandNode Parser::parseCommand() {
 
         if (tok.type == TokenType::redirect) {
             if (tokens.empty()) {
-                //TODO
-                std::cout << "ERROR:" << "No target for redirection" << std::endl;
+                std::cerr << "No target for redirection" << std::endl;
             } else {
                 Token target = tokens.front(); tokens.pop();
                 command.redirects.push_back({stringToRedirectType(tok.value), target.value});

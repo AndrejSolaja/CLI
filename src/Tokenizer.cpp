@@ -175,8 +175,7 @@ std::vector<Token> Tokenizer::tokenize() {
         Token token = next();
 
         if (token.error_type.has_value()) {
-            // Print error  TODO: Expand on this with better message
-            std::cout << "Error at token \"" << token.value
+            std::cerr << "Error at token \"" << token.value
                       << "\" on position " << token.error_offset_within_token << std::endl;
             return {};
         }
