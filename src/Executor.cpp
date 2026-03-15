@@ -20,6 +20,10 @@ void Executor::resolveRedirections() {
             // std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             saved_input = std::cin.rdbuf();
             input_stream.open(redirect.target);
+            if (!input_stream.is_open()) {
+                std::cerr << "File " << redirect.target << " does not exist or cannot be opened." << std::endl;
+                return;
+            }
             std::cin.rdbuf(input_stream.rdbuf());
         }
         else if (redirect.type == RedirectType::out) {

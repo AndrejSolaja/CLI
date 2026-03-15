@@ -6,6 +6,7 @@
     <ClCompile Include="src\Parser.cpp" />
     <ClCompile Include="src\Executor.cpp" />
     <ClCompile Include="src\Command.cpp" />
+    <ClCompile Include="src\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Tokenizer.h" />
@@ -14,6 +15,7 @@
     <ClInclude Include="src\InbuiltCommands.h" />
     <ClInclude Include="src\Types.h" />
     <ClInclude Include="src\Command.h" />
+    <ClInclude Include="src\Console.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

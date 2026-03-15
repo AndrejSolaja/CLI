@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\Command.cpp" />
     <ClCompile Include="src\Executor.cpp" />
     <ClCompile Include="src\Parser.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="src\Tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Console.h" />
     <ClInclude Include="src\Command.h" />
     <ClInclude Include="src\Executor.h" />
     <ClInclude Include="src\InbuiltCommands.h" />
