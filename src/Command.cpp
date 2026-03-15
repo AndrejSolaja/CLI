@@ -5,6 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <iomanip>
+#include <filesystem>
 
 #include "Console.h"
 
@@ -96,18 +97,47 @@ void touchCmd(const CommandNode& command) {
     if(command.args.size() != 1) {
         std::cerr << "Command " << command.name << "takes 1 argument and has no options" << std::endl;
     }
-    std::string file_name = command.args[0];
+    std::string file_path = command.args[0];
 
-    std::ifstream infile(file_name);
-    if (infile.is_open()) {
-        std::cerr << "File " << file_name << " already exists." << std::endl;
+    std::ifstream existing_file(file_path);
+    if (existing_file.is_open()) {
+        std::cerr << "File " << file_path << " already exists." << std::endl;
         return;
     }
-    std::ofstream new_file(file_name);
+    // std::ios::out (default) mode creates new file, if it already exists , trunactes it
+    std::ofstream new_file(file_path, std::ios::out);
 
 
 }
 
+void truncateCmd(const CommandNode& command) {
+    if(command.args.size() != 1) {
+        std::cerr << "Command " << command.name << "takes 1 argument and has no options" << std::endl;
+    }
+    std::string file_path = command.args[0];
+
+    std::ifstream existing_file(file_path);
+    if (!existing_file.is_open()) {
+        std::cerr << "File " << file_path << " cannot be found." << std::endl;
+        return;
+    }
+    // std::ios::out (default) mode creates new file, if it already exists , trunactes it
+    std::ofstream truncated_file(file_path, std::ios::out);
+
+}
+
+void rmCmd(const CommandNode& command) {
+    if(command.args.size() != 1) {
+        std::cerr << "Command " << command.name << "takes 1 argument and has no options" << std::endl;
+    }
+    std::string file_path = command.args[0];
+
+    // returns false if the file didn't exist
+    if(!std::filesystem::remove(file_path)){
+        std::cerr << "File " << file_path << " cannot be found." << std::endl;
+    }
+
+}
 
 const std::unordered_map<std::string, std::function<void(const CommandNode&)>> command_map = {
     {"echo", echoCmd},
@@ -115,5 +145,7 @@ const std::unordered_map<std::string, std::function<void(const CommandNode&)>> c
     {"time", timeCmd},
     {"date", dateCmd},
     {"touch", touchCmd},
+    {"truncate", truncateCmd},
+    {"rm", rmCmd},
 
 };
