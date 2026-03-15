@@ -1,17 +1,26 @@
 #include <iostream>
-#include <fstream>
-
-#include "Tokenizer.h"
-#include "Parser.h"
 #include "Executor.h"
 
 int main()
 {
-    Tokenizer tokenizer("command.txt");
-    Parser parser(tokenizer);
-    Executor executor(parser);
 
-    executor.executeCommands();
+    std::string input;
+
+    while(true){
+        std::cout << "$ ";
+        std::getline(std::cin, input);
+
+        Tokenizer tokenizer(input);
+        Parser parser(tokenizer);
+        Executor executor(parser);
+        executor.executeCommands();
+        std::cout << std::endl;
+    }
+
+
+    
+
+    
     
 
 }

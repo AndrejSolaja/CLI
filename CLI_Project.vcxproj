@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Command.cpp" />
     <ClCompile Include="src\Executor.cpp" />
     <ClCompile Include="src\Parser.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Command.h" />
     <ClInclude Include="src\Executor.h" />
     <ClInclude Include="src\InbuiltCommands.h" />
     <ClInclude Include="src\Parser.h" />

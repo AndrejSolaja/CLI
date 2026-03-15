@@ -18,10 +18,11 @@ std::string tokenTypeName(TokenType type) {
 
 // ---- Tokenizer ----
 
-Tokenizer::Tokenizer(const std::string& file_path) {
-    if (!loadFile(file_path)) {
-        throw std::runtime_error("Could not open file " + file_path);
-    }
+Tokenizer::Tokenizer(const std::string& text) {
+    this->text = text;
+    cursor = 0;
+    end = text.size();
+    has_next = true;
 }
 
 bool Tokenizer::loadFile(const std::string& file_path) {

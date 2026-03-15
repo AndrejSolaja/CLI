@@ -32,7 +32,7 @@ struct Token {
 class Tokenizer
 {
 public:
-    Tokenizer(const std::string& file_path);
+    Tokenizer(const std::string& text);
 
     std::vector<Token> tokenize();
     std::string tokenString(const Token& token);
