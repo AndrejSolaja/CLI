@@ -16,6 +16,7 @@
     <ClInclude Include="src\Types.h" />
     <ClInclude Include="src\Command.h" />
     <ClInclude Include="src\Console.h" />
+    <ClInclude Include="src\DataTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

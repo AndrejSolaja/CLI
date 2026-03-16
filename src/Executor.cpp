@@ -1,9 +1,12 @@
 #include "Executor.h"
+#include "Command.h"
+
 #include <iostream>
 #include <sstream>
 
-Executor::Executor(Parser parser) {
-    this->commands = parser.parseInput();
+
+Executor::Executor(const std::vector<CommandNode>& commands) {
+    this->commands = commands;
 }
 
 void Executor::executeCommands() {

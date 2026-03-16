@@ -5,19 +5,6 @@
 #include <iostream>
 #include <stdexcept>
 
-std::string tokenTypeName(TokenType type) {
-    switch (type) {
-        case TokenType::string:   return "string";
-        case TokenType::pipe:     return "pipe";
-        case TokenType::redirect: return "redirect";
-        case TokenType::end:      return "end";
-        case TokenType::error:    return "error";
-        default:                  return "unknown";
-    }
-}
-
-// ---- Tokenizer ----
-
 Tokenizer::Tokenizer(const std::string& text) {
     this->text = text;
     cursor = 0;
@@ -42,7 +29,7 @@ bool Tokenizer::loadFile(const std::string& file_path) {
     return true;
 }
 
-Token Tokenizer::makeToken(TokenType type, size_t token_start) {
+Token Tokenizer::makeToken(TokenType_t type, size_t token_start) {
     Token new_token;
     new_token.type = type;
     new_token.value = text.substr(token_start, cursor - token_start);
@@ -51,7 +38,7 @@ Token Tokenizer::makeToken(TokenType type, size_t token_start) {
 
 Token Tokenizer::makeError(TokenizerErrorType error_type, size_t token_start, size_t error_loc) {
     Token new_token;
-    new_token.type = TokenType::error;
+    new_token.type = TokenType_t::error;
     new_token.value = text.substr(token_start, cursor - token_start);
     new_token.error_type = error_type;
     new_token.error_offset_within_token = error_loc - token_start; // offset from token start
@@ -105,7 +92,7 @@ Token Tokenizer::readString() {
         return makeError(TokenizerErrorType::unterminated_quote, token_start, cursor);
     }
 
-    return makeToken(TokenType::string, token_start);
+    return makeToken(TokenType_t::string, token_start);
 }
 
 bool Tokenizer::isTokenSeparator(char c) {
@@ -124,7 +111,7 @@ bool Tokenizer::isTokenSeparator(char c) {
 
 Token Tokenizer::next() {
     if (!has_next) {
-        return Token(TokenType::end);
+        return Token(TokenType_t::end);
     }
 
     // Skip whitespace - but NOT newlines
@@ -136,7 +123,7 @@ Token Tokenizer::next() {
     // Check again after skipping whitespaces
     if (cursor >= end) {
         has_next = false;
-        return Token(TokenType::end);
+        return Token(TokenType_t::end);
     }
 
     size_t token_start = cursor;
@@ -146,11 +133,11 @@ Token Tokenizer::next() {
         case '\n':
             cursor++;
             has_next = false;
-            return makeToken(TokenType::end, token_start);
+            return makeToken(TokenType_t::end, token_start);
 
         case '|':
             cursor++;
-            return makeToken(TokenType::pipe, token_start);
+            return makeToken(TokenType_t::pipe, token_start);
 
         case '>':
         case '<':
@@ -158,7 +145,7 @@ Token Tokenizer::next() {
                 cursor++;
             }
             cursor++;
-            return makeToken(TokenType::redirect, token_start);
+            return makeToken(TokenType_t::redirect, token_start);
 
         default:
             return readString();
@@ -188,8 +175,19 @@ std::vector<Token> Tokenizer::tokenize() {
     return token_list;
 }
 
-std::string Tokenizer::tokenString(const Token& token) {
-    std::string type = tokenTypeName(token.type);
+std::string Tokenizer::tokenTypeEnumToString(const TokenType_t type) {
+    switch (type) {
+        case TokenType_t::string:   return "string";
+        case TokenType_t::pipe:     return "pipe";
+        case TokenType_t::redirect: return "redirect";
+        case TokenType_t::end:      return "end";
+        case TokenType_t::error:    return "error";
+        default:                  return "unknown";
+    }
+}
+
+std::string Tokenizer::tokenToString(const Token& token) {
+    std::string type = tokenTypeEnumToString(token.type);
     return "[" + token.value + "](" + type + ")";
 }
 
@@ -197,5 +195,4 @@ void Tokenizer::resetTokenizer() {
     cursor = 0;
     has_next = true;
 }
-
 

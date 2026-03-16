@@ -6,20 +6,13 @@
 #include <chrono>
 #include <iomanip>
 #include <filesystem>
+#include <windows.h>
 
-#include "Console.h"
+#include "Tokenizer.h"
+#include "Parser.h"
 #include "Executor.h"
 
-RedirectType stringToRedirectType(const std::string& str) {
-    if (str == "<") {
-        return RedirectType::in;
-    } else if (str == ">") {
-        return RedirectType::out;
-    } else if (str == ">>") {
-        return RedirectType::append;
-    }
-    return RedirectType::none;
-}
+#include "Console.h"
 
 void echoCmd(const CommandNode& command) {
     std::ifstream input_stream;
@@ -374,9 +367,14 @@ void batchCmd(const CommandNode& command) {
     std::ifstream batch_file(file_path);
     std::string line;
     while(std::getline(batch_file, line)){
+        // Tokenizer tokenizer(line);
+        // Parser parser(tokenizer);
+        // Executor executor(parser);
+        // executor.executeCommands();
+
         Tokenizer tokenizer(line);
-        Parser parser(tokenizer);
-        Executor executor(parser);
+        Parser parser(tokenizer.tokenize());
+        Executor executor(parser.parse());
         executor.executeCommands();
 
         // Don't go to new line if it already there. 

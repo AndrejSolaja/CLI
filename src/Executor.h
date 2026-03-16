@@ -1,12 +1,14 @@
 #pragma once
-#include "Parser.h"
+#include "DataTypes.h"
+
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 class Executor
 {
 public:
-    Executor(Parser parser);
+    Executor(const std::vector<CommandNode>& commands);
     void executeCommands();
 
 private:

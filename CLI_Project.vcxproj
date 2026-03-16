@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="src\Console.h" />
     <ClInclude Include="src\Command.h" />
+    <ClInclude Include="src\DataTypes.h" />
     <ClInclude Include="src\Executor.h" />
     <ClInclude Include="src\InbuiltCommands.h" />
     <ClInclude Include="src\Parser.h" />
