@@ -231,9 +231,11 @@ void trCmd(const CommandNode& command) {
     std::optional<std::string> input_arg;
     std::optional<std::string> what;
     std::string with = "";
+    bool no_arg = false; // This ensures that arg must be first 
 
     for(const auto& x : command.args) {
         if(x[0] == '-') {
+            no_arg = true;
             std::string w = x.substr(1);
             if(w.size() >= 2 && w[0] == '"' && w[w.size()-1] == '"')
                 what = w.substr(1, w.size() - 2);
@@ -241,7 +243,7 @@ void trCmd(const CommandNode& command) {
                 std::cerr << "Invalid input for what option, needs to be enclosed in quotes" << std::endl;
                 return;
             }
-        } else if(!input_arg.has_value()) {
+        } else if(!input_arg.has_value() && !no_arg) {
             // First quoted non - argument
             input_arg = x;
         } else {
@@ -376,6 +378,12 @@ void batchCmd(const CommandNode& command) {
         Parser parser(tokenizer);
         Executor executor(parser);
         executor.executeCommands();
+
+        // Don't go to new line if it already there. 
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi) && csbi.dwCursorPosition.X != 0) {
+            std::cout << std::endl;
+        }
     }
 
 

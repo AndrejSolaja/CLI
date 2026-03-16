@@ -16,9 +16,10 @@ private:
     std::ifstream input_stream;
     std::ofstream output_stream;
 
-    void resolveRedirections();
+    void resolveRedirections(CommandNode& command);
+    void saveStreams();
     void restoreStreams();
     void executeSingleCommand(CommandNode& command);
-    void executePipedCommands();
+    void executePipedCommands(std::vector<CommandNode>& commands);
 };
 
