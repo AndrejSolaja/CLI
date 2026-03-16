@@ -8,6 +8,7 @@
 #include <filesystem>
 
 #include "Console.h"
+#include "Executor.h"
 
 RedirectType stringToRedirectType(const std::string& str) {
     if (str == "<") {
@@ -50,7 +51,9 @@ void echoCmd(const CommandNode& command) {
     }else if(command.args.size() == 0) {
         std::string line;
         while(std::getline(std::cin, line)){
-            buffer += line + '\n';
+            buffer += line;
+            if(!std::cin.eof())
+                buffer += '\n';
         }
     }
     
@@ -199,7 +202,9 @@ void wcCmd(const CommandNode& command) {
     }else{
         std::string line;
         while(std::getline(std::cin, line)){
-            buffer += line + '\n';
+            buffer += line;
+            if(!std::cin.eof())
+                buffer += '\n';
         }
     }
 
@@ -232,9 +237,10 @@ void trCmd(const CommandNode& command) {
             std::string w = x.substr(1);
             if(w.size() >= 2 && w[0] == '"' && w[w.size()-1] == '"')
                 what = w.substr(1, w.size() - 2);
-            else
+            else {
                 std::cerr << "Invalid input for what option, needs to be enclosed in quotes" << std::endl;
                 return;
+            }
         } else if(!input_arg.has_value()) {
             // First quoted non - argument
             input_arg = x;
@@ -243,9 +249,10 @@ void trCmd(const CommandNode& command) {
             std::string w = x;
             if(w.size() >= 2 && w[0] == '"' && w[w.size()-1] == '"')
                 with = w.substr(1, w.size() - 2);
-            else
+            else {
                 std::cerr << "Invalid input for with option, needs to be enclosed in quotes" << std::endl;
                 return;
+            }
         }
     }
 
@@ -272,8 +279,11 @@ void trCmd(const CommandNode& command) {
         }
     } else {
         std::string line;
-        while(std::getline(std::cin, line))
-            buffer += line + '\n';
+        while(std::getline(std::cin, line)) {
+            buffer += line;
+            if(!std::cin.eof())
+                buffer += '\n';
+        }
     }
 
     // replace all occurrences of 'what' with 'with' (or remove if 'with' not set)
@@ -331,8 +341,11 @@ void headCmd(const CommandNode& command) {
         }
     } else {
         std::string line;
-        while(std::getline(std::cin, line))
-            buffer += line + '\n';
+        while(std::getline(std::cin, line)) {
+            buffer += line;
+            if(!std::cin.eof())
+                buffer += '\n';
+        }
     }
 
     int ncount = std::stoi(n_count.value().substr(1));  // n3 -> 3
@@ -340,6 +353,32 @@ void headCmd(const CommandNode& command) {
     std::string line;
     for(int i = 0; i < ncount && std::getline(iss, line); i++)
         std::cout << line << '\n';
+
+}
+
+void batchCmd(const CommandNode& command) {
+    if(command.args.size() != 1) {
+        std::cerr << "Command " << command.name << " takes 1 required argument " << std::endl;
+    }
+
+    std::string file_path = command.args[0];
+
+    std::ifstream existing_file(file_path);
+    if (!existing_file.is_open()) {
+        std::cerr << "File " << file_path << " cannot be found." << std::endl;
+        return;
+    }
+
+    std::ifstream batch_file(file_path);
+    std::string line;
+    while(std::getline(batch_file, line)){
+        Tokenizer tokenizer(line);
+        Parser parser(tokenizer);
+        Executor executor(parser);
+        executor.executeCommands();
+    }
+
+
 
 }
 
@@ -354,5 +393,6 @@ const std::unordered_map<std::string, std::function<void(const CommandNode&)>> c
     {"wc", wcCmd},
     {"tr", trCmd},
     {"head", headCmd},
+    {"batch", batchCmd}
 
 };

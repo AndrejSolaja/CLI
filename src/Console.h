@@ -1,5 +1,6 @@
 #pragma once
 #include "Executor.h"
+#include <windows.h>
 
 class Console
 {
@@ -24,7 +25,13 @@ public:
             Parser parser(tokenizer);
             Executor executor(parser);
             executor.executeCommands();
-            std::cout << std::endl;
+
+            // Don't go to new line if it already there. 
+            CONSOLE_SCREEN_BUFFER_INFO csbi;
+            if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi) && csbi.dwCursorPosition.X != 0) {
+                std::cout << std::endl;
+            }
+            
         }
     }
 

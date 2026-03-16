@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <functional>
 
+class Executor;
+
 enum class RedirectType {
     in,     // <
     out,    // >
