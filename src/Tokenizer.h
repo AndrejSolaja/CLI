@@ -11,8 +11,7 @@ class Tokenizer
 public:
     Tokenizer(const std::string& text);
 
-    std::vector<Token> tokenize();
-    static std::string tokenToString(const Token& token);
+    std::vector<CLI::Token> tokenize();
     
 private:
     bool loadFile(const std::string& file_path);
@@ -20,15 +19,13 @@ private:
     std::string text;       // input data
     size_t cursor;          // current position
     size_t end;             // end of input
-    bool has_next;
 
-    Token makeToken(TokenType_t type, size_t token_start);
-    Token makeError(TokenizerErrorType type, size_t token_start, size_t error_loc);
-    Token readString();
-    Token next();
+    CLI::Token makeToken(CLI::TokenType type, size_t token_start);
+    CLI::Token makeError(CLI::TokenizerErrorType type, size_t token_start, size_t error_loc);
+    CLI::Token readString();
+    CLI::Token next();
     void resetTokenizer();
 
-    static std::string tokenTypeEnumToString(const TokenType_t type);
     static bool isTokenSeparator(char c);
 };
 

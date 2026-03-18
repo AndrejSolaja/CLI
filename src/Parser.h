@@ -8,12 +8,12 @@
 class Parser
 {
 public:
-    Parser(const std::vector<Token>& tokens);
-    std::vector<CommandNode> parse();
+    Parser(const std::vector<CLI::Token>& tokens);
+    std::vector<CLI::CommandNode> parse();
 
 private:
-    std::queue<Token> tokens;
-    CommandNode parseCommand();
-    static RedirectType stringToRedirectType(const std::string& str);
+    std::queue<CLI::Token> tokens;
+    CLI::CommandNode parseCommand();
+    static CLI::RedirectType stringToRedirectType(const std::string& str);
 };
 

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+using namespace CLI;
 
 
 Executor::Executor(const std::vector<CommandNode>& commands) {

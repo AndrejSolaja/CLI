@@ -10,6 +10,7 @@
 
 #include "Tokenizer.h"
 #include "Parser.h"
+using namespace CLI;
 #include "Executor.h"
 
 #include "Console.h"
